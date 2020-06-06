@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue v-for指令</title>
+    <script src="src/vue.js"></script>
+    
+</head>
+<body>
+    <div id="app">
+      <h3>v-for 演示 可以循环数组</h3>
+        <ul>
+          <li v-for="(item, index) of arr" :key="index">{{item}}</li>
+          <!-- <li v-for="(item, index) in arr" >{{item}}</li> -->
+        </ul>
+        <h3>可以循环数字</h3>
+        <ul>
+          <li v-for="(n,index) in nums">{{n}}--{{index}}</li>
+        </ul>
+        <h3>可以循环字符串</h3>
+        <ul>
+          <li v-for="(value,index) in str">{{value}}--{{index}}</li>
+        </ul>
+        <h3>可以循环对象</h3>
+        <ul>
+          <li v-for="(val,item,index) in person">{{val}}--{{item}}--{{index}}</li>
+        </ul>
+
+        <h3>v-for优先级 高于 v-if </h3>
+        <ul>
+          <li v-for="value in arr2" v-if="value">{{value}}</li>
+        </ul>
+
+        <h3>能够让数组在视图中更新的操作</h3>
+    </div>
+    
+    <script>
+      /* 
+      * v-for 指令可以做列表循环
+      * 循环数组时，可以得到两个变量(value,index) 数组成员，成员的索引
+      * 循环数字时，可以得到两个变量(n,index) 数字成员，数字的索引
+      * 循环字符串时，可以得到两个变量(value,index) 字符成员，字符的索引
+      * 循环变量时，可以得到两个变量(val,item,index) 对象成员，对象属相名(key 字段名)，对象的索引
+      * for-in 和 for of 的表现完全一致. 一般情况下，for-in 遍历对象的， for-of 遍历数组的 
+      * v-for 的优先级高于v-if 
+      * 
+      */
+
+
+      /*   深入响应式原理
+      * 能够让数组在视图中更新的操作（数组的变异方法，也就是会修改原数组,修改后能直接映射到视图尚德额）
+      * 
+      * 1、push() 能让数组显示在视图中
+      * 2、pop() 能让数组显示在视图中
+      * 3、unshift() 能让数组显示在视图中
+      * 4、shift() 能让数组显示在视图中
+      * 5、splice() 能让数组显示在视图中
+      * 6、reverse() 能让数组显示在视图中
+      * 7、sort() 能让数组显示在视图中
+      * 
+      * 
+      * 不能让数组显示在视图中更新的操作
+      * 
+      * 1、直接修改数组索引，如 arr[0]='小何'
+      * 2、修改数组长度的length
+      * 3、filder .....
+      * 
+      * 
+      * 能够让对象在视图中更新的操作
+      * 
+      * 1、直接用点操作修改对象中属性值，如 vm.person.name=''易烊千玺
+      * 
+      * 
+      * 不能让对象在视图中更新的操作
+      * 
+      * 1、添加对象属性，不能显示在视图中,如 vm.person.sex='男'
+      * 2、删除对象属性 delete vm.person.name
+      */
+      let vm = new Vue({
+        el:'#app',
+        data:{
+          arr:['胡歌','易烊千玺','肖战'],
+          nums:5,
+          str:"小明小何柯晓明",
+          person:{
+            name:"胡歌",
+            height:"185",
+            age:"37"
+          },
+          //因为循环的时候有一个v-if="value",意思就是当数组中的值有false 的时候就不会显示，一般是false 的有 0 underfind 等等
+          arr2:['郑爽','赵丽颖','戚薇',0]
+          
+        }
+        
+      });
+    </script>
+</body>
+</html>

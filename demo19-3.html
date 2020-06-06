@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue子组件向父组件传值</title>
+  <script src="src/vue.js"></script>
+  <style>
+    ul li {
+      list-style: none;
+      margin: 10px 0;
+    }
+
+    ul li span {
+      width: 70px;
+      text-align: right;
+      display: inline-block;
+    }
+
+    input {
+      width: 245px;
+      height: 30px;
+    }
+
+    button {
+      padding: 10px 35px;
+      margin-left: 130px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    
+    <h2>Vue 子组件向父组件传值</h2>
+
+    <!-- 父组件先订阅了子组件的xxx事件，然后等待子组件那边触发 -->
+    <son @xxx="parentHandleClick"></son>
+
+  </div>
+
+  <template id="test">
+    <div>
+      <ul>
+        <li>易烊千玺</li>
+      </ul>
+      <button @click="handleClick">点击</button>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * 
+     * 
+    */
+    
+    let son = {
+      template: '#test',
+      data:function(){
+        return {
+          name:'我是子组件的数据'
+        }
+      },
+      methods: {
+        handleClick(){
+          this.$emit('xxx',this.name);
+        }
+      },
+      
+    };
+    //这样子组件挂载的方式 成为局部组件
+    let vm = new Vue({
+      el: '#app',
+      data: {
+      },
+      components: {
+        son: son
+        // son 也可以直接写son es6写法
+      },
+      methods: {
+        parentHandleClick(value){
+          //传过来的value 就是接收子组件传过来的值
+          console.log('事件触发了',value);
+          
+        }
+      },
+    });
+
+    //这样子挂载成为全局组件
+    /* Vue.component('son',{
+      template: '#test',
+    }); */
+  </script>
+</body>
+
+</html>

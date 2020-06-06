@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue</title>
+    <script src="src/vue.js"></script>
+    <style>
+      img {
+        width: auto;
+        height: 200px;
+      }
+      .active {
+        width: 300px;
+        height: 300px;
+        margin: 0 auto;
+        background: url('images/1.jpeg');
+        background-size: cover;
+      }
+      .br {
+        border-radius: 50%;
+      }
+    </style>
+</head>
+<body>
+    <h3>vue 的基本指令 v-model</h3>
+    <div id="app">
+      <input type="text" v-model="msg">
+      {{msg}}
+      <br>
+      <br>
+      <textarea name="" id="" cols="50" rows="10" v-model="textarea"></textarea>
+      <br>
+      {{textarea}}
+      <br>
+      <input type="checkbox" name="" id="check" v-model="toggle">
+      <label for="check">{{toggle}}</label>
+      <br>
+      <h3>整组多选框</h3>
+      你喜欢的是？
+      <!-- 又加 v-model  又加 checked="checked" 这样是不会选中的 因为返回vvm 模式的问题 返回model 层 再反回来了 -->
+      <!-- <input type="checkbox" name="" id="check1" v-model="flag" value="石原里美" checked="checked"> -->
+      
+      <input type="checkbox" name="" id="check1" v-model="flag" value="石原里美">
+      <label for="check1">石原里美</label>
+      <input type="checkbox" name="" id="check2" v-model="flag" value="新垣结衣">
+      <label for="check2">新垣结衣</label>
+      <input type="checkbox" name="" id="check3" v-model="flag" value="胡歌">
+      <label for="check3">胡歌</label>
+      <input type="checkbox" name="" id="check4" v-model="flag" value="易烊千玺">
+      <label for="check4">易烊千玺</label>
+
+      <br>
+      <h3>整组单选框</h3>
+      你喜欢的是？
+      <input type="radio" name="" id="check5" v-model="tag" value="石原里美">
+      <label for="check5">石原里美</label>
+      <input type="radio" name="" id="check6" v-model="tag" value="新垣结衣">
+      <label for="check6">新垣结衣</label>
+      <input type="radio" name="" id="check7" v-model="tag" value="胡歌">
+      <label for="check7">胡歌</label>
+      <input type="radio" name="" id="check8" v-model="tag" value="易烊千玺">
+      <label for="check8">易烊千玺</label>
+
+      <br>
+      <h3>下拉框</h3>
+      你喜欢的是？
+      <select v-model="select">
+        <option value="" disabled="disabled">请选择</option>
+        <option value="石原里美">石原里美</option>
+        <option value="新垣结衣">新垣结衣</option>
+        <option value="胡歌">胡歌</option>
+        <option value="易烊千玺">易烊千玺</option>
+      </select>
+
+      <br>
+      <h3>好玩的复选框 true 和 false 显示的title 文字不一样</h3>
+      <input type="checkbox"  v-model="show" true-value="易烊千玺" false-value="胡歌">{{show}}
+
+      <br>
+      <h3>把获取焦点事件 改成 离开焦点事件 </h3>
+      <input type="text" v-model.lazy="msg">{{msg}}
+      <br>
+      <p>只能输入数字</p>
+      <input type="number" v-model="number">{{number}}
+      <br>
+      <p>v-model.number 先输入数字 然后 再输入文字 后面的文字不显示，但是一开始就输入文字 也可以显示文字加数字</p>
+      <input type="text" v-model.number="msg">{{msg}}
+      <br>
+      <p>v-model.trim</p>
+      <input type="text" v-model.trim="msg">{{msg}}
+
+      <br>
+      <h3>图片数组演示 v-bind 指令运用</h3>
+      <img v-bind:src="imgs[0].src" v-bind:alt="imgs[0].alt" >
+      <img v-bind:src="imgs[1].src" v-bind:alt="imgs[1].alt" >
+      <!-- 可以简写 -->
+      <!-- 
+      <img :src="imgs[0].src" :alt="imgs[0].alt" >
+      <img :src="imgs[1].src" :alt="imgs[1].alt" > 
+      -->
+      <br>
+      <h3>控制 类名的显示或隐藏 v-bind 指令运用</h3>
+      <img v-bind:class="{active:isActive,br:isBr}">
+      <img v-bind:class="['br',classToggle.isActive?'active':'']">
+      <br>
+      <p>或者可以用计算实行</p>
+      <img v-bind:class="['br',classObject]">
+      <!-- 也可以这样写 -->
+      <img v-bind:class="classObject">
+      <!-- 这样class 能自动合并，而不是覆盖 -->
+      <!-- <img v-bind:class="classObject" class="container"> -->
+      <!-- 或者可以用数组 -->
+      <!-- <img v-bind:class="['br',classToggle.isActive?'active':'']"> -->
+      <!-- 或者可以用对象 -->
+      <!-- <img v-bind:class="{active:classToggle.isActive,br:classToggle.isBr}"> -->
+      <!-- 意思就是说，有数组和对象的会自动解析，然后有嵌套的就会多层解析 -->
+
+      <h3>控制样式</h3>
+      <p v-bind:style="{fontSize:cssData.fontSize,color:cssData.color}">斋藤飞鸟</p>
+      <!-- 可以演变成 -->
+      <p v-bind:style="cssData">斋藤飞鸟222</p>
+      <!-- 可以演变成 -->
+      <p v-bind:style="[cssData1,cssData2]">斋藤飞鸟3333</p>
+    </div>
+    <script>
+      let imgs =[
+        {src:'images/1.jpeg', alt:'斋藤飞鸟1'},
+        {src:'images/2.jpeg', alt:'斋藤飞鸟2'},
+      ];
+      let vm = new Vue({
+        el:'#app',
+        data:{
+          msg:'',
+          textarea:'张三小老头',
+          //如果是一个非空字符，会显示true 并且作为title 显示 点击之后又会变成true 或者false 的title
+          toggle:'美少女',
+          //如果flag 直接赋值 true 那么整组都会一起选中 取消
+          // flag:true
+          //直接让等于一个空数组，页面中 添加下标 去显示 然后输出 vm.flag 得出 [true,true,false,true] 类似这样的，但是这种还是比较基本的
+          flag:['胡歌'], //默认选中
+          //flag 页面中直接把value 写上文字，那么打印 vm.flag 输出 ['石原里美'，‘胡歌’],不选就不会出现在数组中
+          tag:[],
+          select:'胡歌', // 有值 默认选中 //如果是数组 没有什么意义 ，因为得出的值，是string 类型
+          show:'胡歌',
+          number:1,
+          imgs:[
+            {src:'images/3.jpeg', alt:'斋藤飞鸟3'},
+            {src:'images/4.jpeg', alt:'斋藤飞鸟4'},
+          ],
+          isActive:true,
+          isBr:true,
+          classToggle:{//可以用数组实现
+            isActive:false,
+            isBr:true,
+          },
+          cssData:{
+            fontSize:24+'px',
+            color:'red'
+          },
+          cssData1:{
+            fontSize:30+'px'
+          },
+          cssData2:{
+            color:'#0f0'
+          }
+        },
+        computed: {
+          classObject:function(){
+            return {
+              active:this.classToggle.isActive,
+              br:this.classToggle.isBr,
+            }
+          }
+        },
+        watch: {
+          select:function(newValue){
+            console.log(typeof newValue,newValue)
+          },
+          msg:function(val){
+            console.log(typeof val,val)
+          }
+        },
+        
+      });
+    </script>
+</body>
+</html>

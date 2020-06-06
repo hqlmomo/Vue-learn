@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue父组件向子组件传值</title>
+  <script src="src/vue.js"></script>
+  <style>
+    ul li {
+      list-style: none;
+      margin: 10px 0;
+    }
+
+    ul li span {
+      width: 70px;
+      text-align: right;
+      display: inline-block;
+    }
+
+    input {
+      width: 245px;
+      height: 30px;
+    }
+
+    button {
+      padding: 10px 35px;
+      margin-left: 130px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    
+    <h2>Vue父组件向子组件传值</h2>
+
+    <!-- <son :msg=msg></son> -->
+    <!-- 相当于下面的写法 -->
+    <!-- <son v-bind:b=msg></son> -->
+
+    <!-- 多个参数接收 -->
+    <son :b="msg2" ></son>
+
+  </div>
+
+  <template id="test">
+    <div>
+      <ul>
+        <li>易烊千玺</li>
+        <li>胡歌</li>
+        <li>肖战</li>
+      </ul>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * 子组件内部的data必须是一个函数，因为组件可以复用，各个组件之间返回的对象不会互相影响
+     * 
+     * 父组件向子组件传递数据  使用属性传值的方式
+     * 
+    */
+    
+    let son = {
+      template: '#test',
+      data:function(){//子组件中的data必须是个函数，否则报错，因为组件可以复用，比如下面的console，引用多少次son,就会执行多少次console
+      console.log('执行');
+      
+        return {
+          name:'xiaohe'
+        }
+      },
+      // props:['a','msg2','msg3']//props 选项用来接受父组件传递的数
+      props:{
+        b:{
+          // Number,String,Boolean,Array,Object,Function,Promise
+          // type:Number, //msg1必须是数字类型 否则父级传过来的是字符串，就报错
+          // type:[Number,String],//可以组合
+          // default:200, //当没有传msg2的时候的默认值
+          // required:true, //设置属性值必须传
+          validator(value){
+            if(value >10){
+              return value
+            }else{
+              return '小猪'
+            }
+            
+            
+          }
+        }
+      }
+    };
+    
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        msg: '我是父组件的数据',
+        msg2: 2,
+        msg3: '第二条 的数据3',
+      },
+      components: {
+        son: son
+        // son 也可以直接写son es6写法
+      }
+    });
+  </script>
+</body>
+
+</html>

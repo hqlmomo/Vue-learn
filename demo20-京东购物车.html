@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>京东购物车</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="src/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <div class="container">
+      <table class="table">
+        <caption class="h1 text-success text-center">京东购物车</caption>
+        <tr>
+          <td>
+            <label for="all">全选</label>
+            <input type="checkbox" name="" id="all" v-model="checkAll" @change="selectAll">
+          </td>
+          <td>商品</td>
+          <td>商品描述</td>
+          <td>单价</td>
+          <td>数量</td>
+          <td>小计</td>
+          <td>操作</td>
+        </tr>
+        <tr v-for="(item,index) of products">
+          <td>
+            <input type="checkbox"  v-model="item.isSelected" @change="checkSingle">
+          </td>
+          <td>
+            <img :src="item.imgUrl"  class="img-rounded" style="height: 100px;">
+          </td>
+          <td>{{item.bookName}}</td>
+          <td>{{item.price}}</td>
+          <td>
+            <input type="number" v-model="item.amount" min="1">
+          </td>
+          <td>{{item.price * item.amount|feeFilter(2)}}</td>
+          <td>
+            <button type="button" class="btn btn-danger" @click="deleteItem(index)">删除</button>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="7">总价：{{sum|feeFilter(2)}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <script>
+ 
+    let vm = new Vue({
+      el: '#app',
+      filters:{//存放过滤器，过滤器的作用是  不改变数据的情况下  只改变数据在页面的展示
+        feeFilter(price,num){
+          //管道 第一个参数永远是竖杠前面的值，那么我们在括号后面传了一个 2，函数这里接收用第二个实参num进行接收
+          return '¥'+ price.toFixed(num) +'元';
+        }
+      },
+      data: {
+        checkAll: false,//绑定全选按钮状态,页面中要绑定 v-model，如上
+        products:[
+          {
+            isSelected: false,
+            imgUrl:"./images/nodejs.jpg",
+            bookName: "深入浅出的Node.js",
+            price:"54.5",
+            amount:1
+          },
+          {
+            isSelected: false,
+            imgUrl:"./images/vuejs.jpg",
+            bookName:"Vue.js实战",
+            price:"62.4",
+            amount:1
+          }
+        ]
+      },
+      computed: {
+        sum(){
+          //总价的计算方式是 所有选中的商品数量*商品价格
+          /**
+           * reduce函数
+           * 如果后面加了默认值0，则pre就是0，next就代表循环数据的第一组对象
+           * 如果后面没有加默认值，则 pre代表循环数据的第一组对象，则next代表第二组对象
+           * 
+           * 下面的写法，带有默认值，则第一次总价为0，加上第一组数据的价格*第一组的数量
+           * 第二次循环，pre是第一次循环得到的总金额，加上第二组数据的价格*第二组的数量，以此类推算出总额
+           * 
+           * 每一项数据的isSelected 选中的情况下，才会将金额加到总额中
+           */
+          return this.products.reduce((pre,next)=>{
+            return pre+(next.isSelected ? next.price*next.amount : 0)
+          },0)
+          
+        }
+      },  
+      methods: {
+        selectAll(){
+          //首先，商品列表中的isSelected要和复选框绑定,v-model进行绑定
+          //循环得到商品列表的isSelected值，逐个改变状态
+          this.products.forEach(item => {
+            item.isSelected = this.checkAll;
+          });
+        },
+        checkSingle(){//监听每个复选框，如果每个复选框都选中，则全选也选中
+          //every() 这个函数会监听数组里面的isSelected，如果每条都选中，才会返回true,否则返回false ，正好赋值给 全选框，然后根据v-model绑定显示在视图上
+          /* console.log(this.products.every((item)=>{
+            return item.isSelected;
+          })); */
+          this.checkAll = this.products.every((item)=>{
+            return item.isSelected;
+          })
+          
+        },
+        deleteItem(index){
+          //点击那一项，就删除那一项
+          this.products.splice(index,1);
+        }
+      
+      },
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue组件知识</title>
+  <script src="src/vue.js"></script>
+  <style>
+    ul li {
+      list-style: none;
+      margin: 10px 0;
+    }
+
+    ul li span {
+      width: 70px;
+      text-align: right;
+      display: inline-block;
+    }
+
+    input {
+      width: 245px;
+      height: 30px;
+    }
+
+    button {
+      padding: 10px 35px;
+      margin-left: 130px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h3>不会随着改变，只有左边的值变了</h3>
+    <ul>
+      <li v-for="(item,index) of arr">
+        <span>{{item}}</span> -- <input type="text">
+      </li>
+    </ul>
+    <h3>会随着改变，左边的值变了，右边也跟着变了</h3>
+    <ul>
+      <li v-for="(item,index) of arr" :key="item">
+        <span>{{item}}</span> -- <input type="text">
+      </li>
+    </ul>
+    <button @click="handleSort">点击</button>
+
+    <h2>组件模板的写法</h2>
+    <!-- 直接引用 son -->
+    <son></son>
+    
+  </div>
+
+  <template id="test">
+    <div>
+      <ul>
+        <li>易烊千玺</li>
+        <li>胡歌</li>
+        <li>肖战</li>
+      </ul>
+    </div>
+  </template>
+  <script type="text/template" id="temp">
+      <div>
+        <ul>
+          <li>快乐大本营</li>
+          <li>天天向上</li>
+          <li>朋友请听好</li>
+        </ul>
+      </div>
+    </script>
+  <script>
+    /**
+      * v-for 内部的节点默认的使用原则是 就地复用
+      * 意思就是，默认情况下，上面li后面的input输入值后，点击按钮随机变换前面的值，但是后面的input 值不会跟着改变
+      *
+      *要想随着改变就得加 :key="item"  这样子就会跟着改变了
+    */
+    /**
+     * 组件模板的写法
+     * 建议使用的是 2的方法
+     * 1、变量定义 一个标签，标签中有且只有一个父元素，可以在这个父元素中嵌套多个子元素，不能存在同级的父元素
+     * 2、将html 元素放到 <template></template>标签中，要用id选择器作为模板,放在#app 同级，如上
+     * 3、将html 元素放到 "<script type=”text/template“><\script>"标签中，要用id选择器作为模板,如上
+    
+    */
+    /* let son ={//第一种模板写法
+      template:`<div><p>我是son组件，我是第一种写法</p></div>`
+    } */
+
+    /* let son = {//第二种写法
+      template: '#test'
+    }; */
+    let temp = {//第三种写法
+      template: '#temp'
+    };
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        arr: ['胡歌', '易烊千玺', '肖战', '陈伟霆'],
+        msg: '我是msg'
+      },
+      methods: {
+        handleSort() {
+          this.arr.sort(() => {
+            return Math.random() - 0.5
+          })
+        }
+      },
+      components: {
+        son: temp
+        // son 也可以直接写son es6写法
+      }
+    });
+  </script>
+</body>
+
+</html>

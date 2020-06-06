@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue</title>
+    <script src="src/vue.js"></script>
+    <style>
+      .mt {
+        margin-bottom:150px;
+      }
+    </style>
+</head>
+<body>
+    <h3>vue 的基本逻辑</h3>
+    <div id="app">{{msg}}
+      <br>
+      {{msg+1}}
+      <br>
+      {{1+1}}
+      <br>
+      {{msg.split("")}}
+      <br>
+      {{msg?msg:'hello world'}}
+      <br>
+      {{(function(){ return 'hello world'})()}}
+
+      <h3>利用计算属性computed 对msg 进行加工返回回来</h3>
+      {{commsg}}
+      <br>
+      {{msg}}
+
+      <h3>重新将msg 的值 修改后再返回来到页面上，原先的值不发生改变</h3>
+      {{comname}}
+      <br>
+      {{name}}
+      <h3>watch 监听方法，当msg改变成’小明‘的时候，后面会加上’超级大帅比‘</h3>
+      <p>可以在浏览器的console下面执行 vm.msg="小明" 试试看</p>
+
+      <h3>methods 可以在vue 实例下面 添加自己的自定义方法 reversedMsg 将msg字符倒写</h3>
+      <p>可以在浏览器的console下面执行 vm.reversedMsg() </p>
+      <br>
+      <h3>简单实现Vue的双向数据绑定</h3>
+      <input type="text" v-model="inputTxt" >
+      <p>{{inputTxt}}</p>
+    </div>
+
+    <div id="myapp" >
+      <p>v-once 只在网页中加载一次</p>
+      <p>v-html 允许只出现文字，不能出现标签在页面上</p>
+
+      <div v-once>{{msg2}}</div>
+
+      <h3>v-html 的演示</h3>
+      <div>{{name2}}</div>
+      <div v-html="name2">{{name2}}</div>
+
+      <h3>v-if 的演示 </h3>
+      <p>(直接将标签去掉，再显示又把它渲染出来,这样很影响性能，直接可以使用v-show)</p>
+      <p>v-show 是加了 display:none  或者 block,性能较好</p>
+      <div>
+        <button>选项1</button>
+        <button>选项2</button>
+        <p v-html="inner" v-if="toggle">{{inner}}</p>
+        <p v-if="!toggle">{{tag}}</p>
+
+        <p v-html="inner2" v-show="toggle">{{inner2}}</p>
+      </div>
+      <h3>v-else 的演示</h3>
+      <p v-html="inner" v-if="toggle">{{inner}}</p>
+      <p v-else="toggle">{{tag}}</p>
+
+      <h3>v-else-if 的演示</h3>
+      <p v-if="type ==='A'">A</p>
+      <p v-else-if="type ==='B'">B</p>
+      <p v-else-if="type ==='c'">C</p>
+      <p v-else>Not A/B/C</p>
+    </div>
+    
+    <script>
+      let vm = new Vue({
+        el:'#app',
+        data:{
+          msg:'小明是个大傻逼',
+          name:'张三小老头',
+          inputTxt:''
+        },
+        //计算属性
+        computed:{
+          commsg:function(){
+            /* 这样就是把原来的msg值都修改了，这样没有意意义
+            this.msg +="V2.0";
+            return this.msg */
+
+           //下面是定义一个属性接收，然后再修改，返回一个新的值
+            let newMsg = this.msg;
+                newMsg +='V2.0';
+            return newMsg;
+            
+          },
+          comname:{
+            get:function(){
+              return this.name+"V1.0";
+            },
+            set:function(newValue){
+              this.name = newValue;
+            }
+          }
+        },
+        watch:{
+          //监听msg 发生变化之后执行的方法
+          msg:function(newValue){
+            
+            // console.log(newValue);//直接输出修改后的值
+
+            //监听当 修改的值 等于 小明的时候，后续名称加上 '超级大帅比'
+            if(newValue ==='小明'){
+              this.msg+="超级大帅比";
+            }
+            
+          }
+        },
+        //自己在实例下面添加自定义的函数
+        methods:{
+          //自定义函数  将msg文字倒转   调用一次 就重新执行一次
+          reversedMsg:function(){
+            return this.msg.split("").reverse().join("");
+          }
+        }
+      });
+
+      //实例另外一个，然后演示里面的name 值
+      let vm2 = new Vue({
+        el:"#myapp",
+        data:{
+          "msg2":'阿狸',
+          "name2":"<p style='color:#f00'>阿狸和塔罗牌</p>",
+          "toggle":true,
+          "tag":"这世界真美好！",
+          "inner":"<p style='color:#00f'>阿狸和塔罗牌(蓝色)</p>",
+          "inner2":"<p style='color:#0f0'>阿狸和塔罗werfwerwe牌(绿色)</p>",
+          "type":"A"
+        }
+      });
+    </script>
+</body>
+</html>

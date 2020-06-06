@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue v-on:click指令</title>
+    <script src="src/vue.js"></script>
+    <style>
+      .wrap {
+        margin-bottom: 50px;
+      }
+    </style>
+</head>
+<body>
+    <div id="app" class="wrap">
+      <button v-on:click="handleClick()" v-on:mouseenter="handleMouseenter()">点击按钮</button>
+      <br>
+      <br>
+      <h3>没加括号的演示</h3>
+      <button @click="handleClick" >点击没加括号的按钮</button>
+      <h3>加了括号的演示</h3>
+      <button @click="handleClick2(2,$event)">点击加了括号的按钮</button>
+      <br>
+      <br>
+      <br>
+      <h2>事件修饰符</h2>
+      <h3>once 修饰符</h3>
+      <button @click.once="handleClick3">一次性点击事件</button>
+      
+      <h3>stop 修饰符</h3>
+      <div @click="Parent">
+        parent
+        <div @click="Son">
+          son
+          <div @click.stop="Grandson">
+            grandson
+          </div>
+        </div>
+      </div>
+
+      <h3>capture 修饰符 事件-2</h3>
+      <div @click.capture="Parent">
+        parent
+        <div @click="Son">
+          son
+          <div @click.stop="Grandson">
+            grandson
+          </div>
+        </div>
+      </div>
+      <h3>kepup 鼠标事件,只会按住enter(回车键)的时候才能触发,修饰符可以叠加</h3>
+      <input type="text" @keyup.enter="hnadleKeyUp">
+
+      <h3>kepup ,只按 s 和 w 会触发（要按照健值表的数字来）,修饰符可以叠加</h3>
+      <!-- <input type="text" @keyup.space.tab="hnadleKeyUp"> -->
+      <input type="text" @keyup.83.87="hnadleKeyUp">
+    </div>
+    
+    <script>
+      /**
+        * 可以绑定多个事件 v-on:click="handleClick()" v-on:mouseenter="handleMouseenter()"
+        * 也可以使用快捷 @click 简短来写，
+        * 
+        * 
+        * @click="handleClick" 不加括号 和  @click="handleClick()" 加括号 的区别
+        * 
+        * 不加括号 
+        * 首先打印console.log(e)得到的是 事件对象
+        * 
+        * 加括号
+        * 加括号后，首先打印出来是undefined，如果页面传入2，那么e打印出来就是2,加了括号需要传事件对象，这么写,@click="handleClick(实参1，实参2....$event)" 
+        * 
+        * 
+        * 事件修饰符
+        * 1、.stop     阻止事件冒泡
+        * 2、.prevent   阻止元素触发行为，如 <a href="" @click:prevent></a>
+        * 3、.capture  捕获，在事件捕获阶段触发，如上 事件-2 演示
+        * 4、.self     触发事件的元素必须是自身才能触发事件处理函数
+        * 5、.once   给节点绑定一次性事件
+        * 
+        * 使用修饰符时，顺序很重要，相应的代码会以同样的顺序产生，因此，用v-on:click.prevent.self会阻止所有的点击，而v-on:click.self.prevent 只会阻止对元素自身的点击
+        * 
+        * 
+        * 按键修饰符，就是键盘事件修饰符
+        * 1、enter 回车键
+        * 2、tab  
+        * 3、delete（'捕获'，'删除'，和'退格'键)
+        * 4、esc 
+        * 5、space  空格
+        * 6、up   上键
+        * 7、down   下键
+        * 8、left   左键 
+        * 9、right  右键
+        * 
+        * 系统按键
+        * 1、ctrl
+        * 2、alt
+        * 3、shift
+        * 4、meta
+        * 
+      */
+      let vm = new Vue({
+        el:'#app',
+        data:{
+          
+        },
+        methods:{
+          handleClick(e){
+            console.log('我被点击了');
+            console.log(e);
+          },
+          handleClick2(number,e,tag){
+            console.log(number);
+            console.log(e);
+            console.log(tag);
+          },
+          handleClick3(){
+            console.log('只会出现一次');
+          },
+          handleMouseenter(){
+            console.log('鼠标移动进来了')
+          },
+          Parent(){
+            console.log('父亲');
+          },
+          Son(){
+            console.log('儿子');
+          },
+          Grandson(){
+            console.log('外孙');
+          },
+          hnadleKeyUp(){
+            console.log('触发了键盘事件');
+          }
+        }
+
+        
+      });
+    </script>
+</body>
+</html>
