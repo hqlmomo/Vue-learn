@@ -30,9 +30,9 @@
         </div>
         <div class="panel-footer">
           <ul class="nav nav-pills">
-            <li role="presentation" class="active"><a href="#">所有任务</a></li>
-            <li role="presentation"><a href="#">已完成</a></li>
-            <li role="presentation"><a href="#">未完成</a></li>
+            <li role="presentation" class="active"><a href="#all">所有任务</a></li>
+            <li role="presentation"><a href="#finish">已完成</a></li>
+            <li role="presentation"><a href="#unfinish">未完成</a></li>
           </ul>
         </div>
       </div>
@@ -72,14 +72,14 @@
       },
       computed: {
         total(){
-          //根据数据中未选中的isSelected 为false的长度 
-
+          //返回数组中 item.isSelected 为false 的数组的长度
           /* return this.tudos.filter((item)=>{
             return item.isSelected===false
           }).length */
 
           //可以简写成
           //第一种  取反
+          //返回数组中 item.isSelected 为false 的数组的长度
           /* return this.tudos.filter((item)=>{
             return !item.isSelected
           }).length */
