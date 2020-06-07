@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学生管理系统案列</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="src/vue.js"></script>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+    .cover {
+      position: fixed;
+      top:0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, .5);
+    }
+    .modal {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="container">
+      <!-- 从子组件发射数据到父组件的add方法中 注意尽量不大写,并且@名称和后面的名称尽量一致-->
+      <add @add="add"></add>
+      <!-- 将父组件的数据传到子组件中循环使用 -->
+      <stulists :students="stulists" @show="show" v-show="stulists.length"></stulists>
+      <dialogtemp v-show="isShow" @delstudent="delstudent"></dialogtemp>
+    </div>
+  </div>
+  <!-- 学生信息添加组件 -->
+  <template id="addTemp">
+    <div>
+      <form>
+        <h2 class="text-center">学生管理系统</h2>
+        <div class="form-group">
+          <label for="exampleInputEmail1">学生姓名</label>
+          <input type="text" v-model="username" class="form-control" id="exampleInputEmail1" placeholder="请输入学生姓名">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">联系方式</label>
+          <input type="text" v-model="phone"  class="form-control" id="exampleInputPassword1" placeholder="请输入联系方式">
+        </div>
+          <!-- 因为这个submit点击提交后悔刷新页面，所以我们必须阻止它 -->
+        <button type="submit" class="btn btn-default" @click.prevent="childAddStudent">添加学生</button>
+      </form>
+    </div>
+  </template>
+
+  <!-- 学生展示组件 -->
+  <template id="studentList">
+    <table class="table table-striped">
+      <caption class="h2 text-center">学生信息表</caption>
+      <tr>
+        <td>学生姓名</td>
+        <td>联系方式</td>
+        <td>操作</td>
+      </tr>
+      <tr v-for="(student,index) of students">
+        <td>{{student.name}}</td>
+        <td>{{student.phone}}</td>
+        <td class="text-center">
+          <button class="btn btn-sm btn-danger glyphicon glyphicon-trash pull-left" @click="delStudent(index)"></button>
+        </td>
+      </tr>
+    </table>
+  </template>
+
+  <!-- 弹窗组件 -->
+  <template id="dialog">
+    <div class="cover">
+      <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                  aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">确定要删除么？</h4>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" @click="cancel" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" @click="confirm" class="btn btn-primary">确定</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+    </div>
+  </template>
+
+
+  <script>
+    let add = {
+      template: "#addTemp",
+      data(){//绑定子组件的姓名和电话
+        return {
+          username:'',
+          phone:''
+        }
+      },
+      methods: {
+        childAddStudent(){
+          //获取名称和联系方式 发射到父组件中
+          this.$emit('add', {
+            name: this.username,
+            phone: this.phone
+          });
+          this.username ='';
+          this.phone ='';
+        }
+      },
+    };
+    let stulists = {
+      template: "#studentList",
+      props: ['students'],
+      methods:{
+        delStudent(index){
+          //点击删除后，先让弹框显示，所以先发射一个方法到根组件让其触发isShow为true
+          this.$emit('show',index)//将删除的索引传过去，在父组件中存起来
+        }
+      }
+    };
+    let dialogtemp = {
+      template: "#dialog",
+      methods:{
+        cancel(){
+          this.$emit('delstudent',false);//让弹框消失，并且不能删除学生数据
+        },
+        confirm(){
+          this.$emit('delstudent',true);//让弹框消失，并且删除学生数据
+        }
+      }
+    };
+
+    let vm = new Vue({
+      el: '#app',
+      data: {
+        isShow:false,//绑定弹窗是否显示隐藏
+        delnum:'',
+        stulists: [
+          /* { name: "胡歌", phone: "1898989" },
+          { name: "彭于晏", phone: "1366032" },
+          { name: "易烊千玺", phone: "183183" } */
+        ]
+      },
+      components: {
+        //组件尽量不要大写，会报错
+        add,
+        stulists,
+        dialogtemp
+      },
+      watch:{   //监控data/computed选项数据的变化
+        stulists:{  //监控stulists 这个根下面的数组变化
+          handler(){
+            //监控到根下面的原本数组的变化，将这些数组存储起来
+            // console.log('数组变化了，我监控到了');
+            localStorage.setItem('stulists',JSON.stringify(this.stulists))
+            
+          },
+          // deep:true  //监控数组length的变化
+        }
+      },
+      created() {
+        //第一次localStorage可能存储没有数据就会为null 然后我们又去循环他，这样子就会出错，所以无数据时可以设置为空
+        this.stulists = JSON.parse(localStorage.getItem('stulists')) || [];
+      },
+      methods:{
+        add(data){
+          // console.log('接收到子组件的数据了');
+          console.log(data);
+          
+          this.stulists.push(data);
+        },
+        show(index){
+         //显示弹窗组件
+          this.isShow = true;
+          this.delnum = index;
+        },
+        delstudent(bool){
+          //子组件要我关闭弹窗
+          this.isShow = false;
+          if(bool){
+            this.stulists.splice(this.delnum,1);
+          }
+          
+        },
+        
+      }
+    });
+  </script>
+</body>
+
+</html>

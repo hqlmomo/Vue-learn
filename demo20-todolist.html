@@ -20,7 +20,9 @@
         </div>
         <div class="panel-body">
           <ul class="list-group">
-            <li class="list-group-item" v-for="(tudo,index) of tudos">
+            <!-- 第一次不用过滤时。用此tudos -->
+            <!-- <li class="list-group-item" v-for="(tudo,index) of tudos"> -->
+            <li class="list-group-item" v-for="(tudo,index) of filterTudos">
               <input type="checkbox" v-model="tudo.isSelected">
               <input type="text" :value="tudo.thing">
               <button class="btn btn-sm btn-danger glyphicon glyphicon-trash pull-right" @click="deleteItem(index)"></button>
@@ -30,9 +32,10 @@
         </div>
         <div class="panel-footer">
           <ul class="nav nav-pills">
-            <li role="presentation" class="active"><a href="#all">所有任务</a></li>
-            <li role="presentation"><a href="#finish">已完成</a></li>
-            <li role="presentation"><a href="#unfinish">未完成</a></li>
+            <!-- 采用绑定对象的方式，将点中状态的class名称和hash值做比较，相等返回true，则显示active这个类名，反之不显示该类名 -->
+            <li role="presentation" :class="{active:hash=='#all'}"><a href="#all">所有任务</a></li>
+            <li role="presentation" :class="{active:hash=='#finish'}"><a href="#finish">已完成</a></li>
+            <li role="presentation" :class="{active:hash=='#unfinish'}"><a href="#unfinish">未完成</a></li>
           </ul>
         </div>
       </div>
@@ -44,6 +47,7 @@
       el: '#app',
       data: {
         thing:'',
+        hash:'#all',   //用来存储页面上的 hash值
         tudos:[
           {
             isSelected: false,
@@ -89,7 +93,70 @@
           return this.tudos.filter(item=>!item.isSelected).length
         
           
+        },
+        filterTudos(){
+          //如果地址栏的hash值，是finish 要找出所有isSelected 为true的数组成员
+          //如果地址栏的hash值，是unfinish 要找出所有isSelected 为false的数组成员
+          //如果地址栏的hash值，是all 要找出所有成员
+
+          if(this.hash ==='#finish'){
+            return this.tudos.filter(tudo=>{
+              return tudo.isSelected
+            })
+          };
+          
+          if(this.hash ==='#unfinish'){
+            return this.tudos.filter(tudo=>{
+              return !tudo.isSelected
+            })
+          };
+
+          if(this.hash ==='#all'){
+            return this.tudos
+          };
+
+          /* 可以简写   第一种方式
+            if(this.hash ==='#finish'){
+              return this.tudos.filter(tudo=>tudo.isSelected
+              })
+            };
+            if(this.hash ==='#unfinish'){
+              return this.tudos.filter(tudo=> !tudo.isSelected)
+            };
+            if(this.hash ==='#all'){
+              return this.tudos
+            };
+          */
+
+          /* 
+            //更可以简写成
+            if(this.hash ==='#finish') return this.tudos.filter(tudo=>tudo.isSelected)
+            
+            if(this.hash ==='#unfinish')return this.tudos.filter(tudo=> !tudo.isSelected)
+            
+            return this.tudos
+            
+          */
+
+
+
+
         }
+      },
+      //钩子函数
+      created() {
+        //能监听页面hash值变化的时候，赋值到vue 中hash值
+        /* window.addEventListener('hashchange',function(){
+          this.hash = window.location.hash; 
+          console.log(window.location.hash) 
+        }) */
+
+        window.addEventListener('hashchange',()=>{
+          this.hash = window.location.hash; 
+          console.log(window.location.hash) 
+        })
+
+        
       },
     });
   </script>
